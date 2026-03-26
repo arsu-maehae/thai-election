@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Candidate, Vote, Election
+from .models import Candidate, Vote, Election, Voter
 
 @admin.register(Candidate)
 class CandidateAdmin(admin.ModelAdmin):
@@ -19,3 +19,12 @@ class VoteAdmin(admin.ModelAdmin):
 @admin.register(Election)
 class ElectionAdmin(admin.ModelAdmin):
     list_display = ['name', 'is_open', 'start_time', 'end_time']
+
+
+@admin.register(Voter)
+class VoterAdmin(admin.ModelAdmin):
+    list_display = ['name', 'national_id', 'has_voted']
+    list_filter = ['has_voted']
+    search_fields = ['name', 'national_id']
+
+

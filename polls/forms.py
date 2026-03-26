@@ -6,7 +6,7 @@ class VoterLoginForm(forms.Form):
         max_length=13,
         widget=forms.TextInput(attrs={
             'class': 'form-control form-control-lg text-center',
-            'placeholder': 'กรอกรหัสประชาชน 13 หลัก',
+            'placeholder': 'กรอกรหัสประชาชน',
             'maxlength': '13',
             'pattern': '[0-9]{13}',
             'inputmode': 'numeric',
