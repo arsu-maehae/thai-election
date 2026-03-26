@@ -3,5 +3,8 @@ from django.db import models
 # Create your models here.
 
 class Candidate(models.Model):
-    name = models.TextField(default='')
-    party = models.TextField(default='')
+    name = models.CharField(max_length=200)
+    party = models.CharField(max_length=200)
+
+    def __str__(self):
+        return f"{self.name} ({self.party})"
