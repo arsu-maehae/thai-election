@@ -92,3 +92,33 @@ class FlashMessageTest(TestCase):
         )
         messages_list = list(response.context['messages'])
         self.assertTrue(any('โหวตซ้ำ' in str(m) for m in messages_list))
+
+
+class ResultsPageTest(TestCase):
+    def setUp(self):
+        Election.objects.create(name='Election 2568', is_open=True)
+        self.c1 = Candidate.objects.create(name='Somchai', party='Green')
+        self.c2 = Candidate.objects.create(name='Malee', party='Blue')
+
+    def test_results_shows_correct_vote_count(self):
+        Vote.objects.create(candidate=self.c1)
+        Vote.objects.create(candidate=self.c1)
+        Vote.objects.create(candidate=self.c2)
+        response = self.client.get('/results/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Somchai')
+        self.assertContains(response, 'Malee')
+
+    def test_results_shows_total_votes(self):
+        Vote.objects.create(candidate=self.c1)
+        Vote.objects.create(candidate=self.c2)
+        response = self.client.get('/results/')
+        self.assertContains(response, '2')
+
+    def test_winner_appears_first(self):
+        Vote.objects.create(candidate=self.c1)
+        Vote.objects.create(candidate=self.c1)
+        Vote.objects.create(candidate=self.c2)
+        response = self.client.get('/results/')
+        candidates = list(response.context['candidates'])
+        self.assertEqual(candidates[0].name, 'Somchai')
