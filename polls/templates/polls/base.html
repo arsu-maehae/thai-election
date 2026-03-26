@@ -28,7 +28,13 @@
   <nav class="navbar navbar-dark bg-dark mb-4">
     <div class="container">
       <a class="navbar-brand fw-bold" href="{% url 'home' %}">🗳️ Election System</a>
-      <a class="btn btn-outline-light btn-sm" href="{% url 'results' %}">ดูผลลัพธ์</a>
+      <div class="d-flex align-items-center gap-3">
+        {% if request.session.voter_id %}
+        <span class="text-white-50 small">{{ request.session.voter_name }}</span>
+        <a href="{% url 'results' %}" class="btn btn-outline-light btn-sm">ผลลัพธ์</a>
+        <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">ออกจากระบบ</a>
+        {% endif %}
+      </div>
     </div>
   </nav>
 

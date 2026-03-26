@@ -1,0 +1,44 @@
+{% extends 'polls/base.html' %}
+{% block title %}เข้าสู่ระบบ{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center mt-5">
+  <div class="col-12 col-md-5">
+
+    <div class="text-center mb-4">
+      <div style="font-size: 3rem;">🗳️</div>
+      <h3 class="fw-bold mt-2">ระบบเลือกตั้ง 2569</h3>
+      <p class="text-muted">กรอกรหัสประชาชน 13 หลักเพื่อเข้าใช้งาน</p>
+    </div>
+
+    <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+      <div class="card-body p-4">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label fw-bold">รหัสประชาชน</label>
+            {{ form.national_id }}
+            {% if form.national_id.errors %}
+            <div class="text-danger small mt-2">
+              {% for error in form.national_id.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+          <button type="submit" class="btn btn-primary w-100 py-2 fw-bold"
+                  style="border-radius: 10px;">
+            เข้าสู่ระบบ
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <p class="text-center text-muted small mt-3">
+      ระบบนี้ใช้รหัสประชาชนเพื่อยืนยันตัวตนเท่านั้น
+    </p>
+
+  </div>
+</div>
+
+{% endblock %}

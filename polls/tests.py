@@ -4,7 +4,7 @@ from django.http import HttpRequest
 from polls.views import home_page
 from polls.models import Candidate
 from polls.models import Vote
-from polls.models import Candidate, Vote, Election
+from polls.models import Candidate, Vote, Election, Voter
 
 
 class HomePageTest(TestCase):
@@ -122,3 +122,33 @@ class ResultsPageTest(TestCase):
         response = self.client.get('/results/')
         candidates = list(response.context['candidates'])
         self.assertEqual(candidates[0].name, 'Somchai')
+
+
+class VoterAuthTest(TestCase):
+    def setUp(self):
+        Election.objects.create(name='การเลือกตั้ง 2569', is_open=True)
+        Candidate.objects.create(name='สมชาย', party='พรรคเขียว')
+
+    def test_cannot_access_home_without_login(self):
+        response = self.client.get('/')
+        self.assertRedirects(response, '/login/')
+
+    def test_can_login_with_valid_national_id(self):
+        Voter.objects.create(national_id='1234567890123', name='สมหมาย ใจดี')
+        response = self.client.post('/login/', {
+            'national_id': '1234567890123'
+        })
+        self.assertRedirects(response, '/')
+
+    def test_cannot_login_with_invalid_national_id(self):
+        response = self.client.post('/login/', {
+            'national_id': '0000000000000'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'ไม่พบรหัสประชาชน')
+
+    def test_national_id_must_be_13_digits(self):
+        response = self.client.post('/login/', {
+            'national_id': '12345'
+        })
+        self.assertContains(response, 'รหัสประชาชนต้องมี 13 หลัก')

@@ -29,3 +29,15 @@ class Election(models.Model):
     @classmethod
     def is_voting_open(cls):
         return cls.objects.filter(is_open=True).exists()
+
+class Voter(models.Model):
+    national_id = models.CharField(max_length=13, unique=True)
+    name = models.CharField(max_length=200)
+    has_voted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.name} ({self.national_id})"
+
+    @classmethod
+    def is_valid_id(cls, national_id):
+        return national_id.isdigit() and len(national_id) == 13
