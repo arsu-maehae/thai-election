@@ -1,10 +1,30 @@
-<!DOCTYPE html>
-<html>
-<body>
-  <h1>ผลการเลือกตั้ง</h1>
-  {% for candidate in candidates %}
-  <p>{{ candidate.name }}: {{ candidate.vote_count }} คะแนน</p>
-  {% endfor %}
-  <a href="{% url 'home' %}">กลับหน้าแรก</a>
-</body>
-</html>
+{% extends 'polls/base.html' %}
+{% block title %}ผลการเลือกตั้ง{% endblock %}
+{% block content %}
+<h2 class="fw-bold mb-1">ผลการเลือกตั้ง</h2>
+<p class="text-muted mb-4">คะแนนรวมทั้งหมด: {{ total_votes }} คะแนน</p>
+
+{% for candidate in candidates %}
+<div class="card candidate-card p-3 mb-3">
+  <div class="d-flex justify-content-between mb-2">
+    <div>
+      <span class="fw-bold">{{ forloop.counter }}. {{ candidate.name }}</span>
+      <small class="text-muted ms-2">{{ candidate.party }}</small>
+    </div>
+    <span class="fw-bold">{{ candidate.vote_count }} คะแนน</span>
+  </div>
+  <div class="progress">
+    <div class="progress-bar bg-primary"
+         style="width: {% if total_votes %}{% widthratio candidate.vote_count total_votes 100 %}{% else %}0{% endif %}%">
+      {% if total_votes %}{% widthratio candidate.vote_count total_votes 100 %}%{% endif %}
+    </div>
+  </div>
+</div>
+{% empty %}
+<p class="text-muted text-center">ยังไม่มีผู้สมัคร</p>
+{% endfor %}
+
+<div class="text-center mt-4">
+  <a href="{% url 'home' %}" class="btn btn-outline-secondary">กลับหน้าโหวต</a>
+</div>
+{% endblock %}
