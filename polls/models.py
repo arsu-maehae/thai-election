@@ -15,3 +15,17 @@ class Vote(models.Model):
         Candidate, on_delete=models.CASCADE, related_name='votes'
     )
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Election(models.Model):
+    name = models.CharField(max_length=200, default='การเลือกตั้ง')
+    is_open = models.BooleanField(default=False)
+    start_time = models.DateTimeField(null=True, blank=True)
+    end_time = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name} ({'เปิด' if self.is_open else 'ปิด'})"
+
+    @classmethod
+    def is_voting_open(cls):
+        return cls.objects.filter(is_open=True).exists()

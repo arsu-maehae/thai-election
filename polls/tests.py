@@ -4,6 +4,7 @@ from django.http import HttpRequest
 from polls.views import home_page
 from polls.models import Candidate
 from polls.models import Vote
+from polls.models import Candidate, Vote, Election
 
 
 class HomePageTest(TestCase):
@@ -25,6 +26,7 @@ class CandidateModelTest(TestCase):
 
 class DuplicateVoteTest(TestCase):
     def setUp(self):
+        Election.objects.create(name='Election 2568', is_open=True) 
         self.candidate = Candidate.objects.create(
             name='Somchai', party='Green Party'
         )
@@ -43,3 +45,17 @@ class DuplicateVoteTest(TestCase):
         self.client.post(f'/vote/{self.candidate.id}/')
         vote_count = Vote.objects.filter(candidate=self.candidate).count()
         self.assertEqual(vote_count, 1)
+
+class ElectionPeriodTest(TestCase):
+    def test_cannot_vote_when_election_is_closed(self):
+        Election.objects.create(name='Election 2568', is_open=False)
+        candidate = Candidate.objects.create(name='Somchai', party='Green')
+        response = self.client.post(f'/vote/{candidate.id}/')
+        self.assertRedirects(response, '/')
+        self.assertEqual(Vote.objects.count(), 0)
+
+    def test_can_vote_when_election_is_open(self):
+        Election.objects.create(name='Election 2568', is_open=True)
+        candidate = Candidate.objects.create(name='Somchai', party='Green')
+        response = self.client.post(f'/vote/{candidate.id}/')
+        self.assertEqual(Vote.objects.count(), 1)
