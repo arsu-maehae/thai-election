@@ -59,3 +59,36 @@ class ElectionPeriodTest(TestCase):
         candidate = Candidate.objects.create(name='Somchai', party='Green')
         response = self.client.post(f'/vote/{candidate.id}/')
         self.assertEqual(Vote.objects.count(), 1)
+
+
+
+class FlashMessageTest(TestCase):
+    def setUp(self):
+        Election.objects.create(name='Election 2568', is_open=True)
+        self.candidate = Candidate.objects.create(
+            name='Somchai', party='Green Party'
+        )
+
+    def test_success_message_after_voting(self):
+        response = self.client.post(
+            f'/vote/{self.candidate.id}/', follow=True
+        )
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertIn('Somchai', str(messages_list[0]))
+
+    def test_error_message_when_election_closed(self):
+        Election.objects.all().update(is_open=False)
+        response = self.client.post(
+            f'/vote/{self.candidate.id}/', follow=True
+        )
+        messages_list = list(response.context['messages'])
+        self.assertTrue(any('ยังไม่เปิด' in str(m) for m in messages_list))
+
+    def test_warning_message_on_duplicate_vote(self):
+        self.client.post(f'/vote/{self.candidate.id}/')
+        response = self.client.post(
+            f'/vote/{self.candidate.id}/', follow=True
+        )
+        messages_list = list(response.context['messages'])
+        self.assertTrue(any('โหวตซ้ำ' in str(m) for m in messages_list))
