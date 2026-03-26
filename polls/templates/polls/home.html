@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html>
-<head><title>Election</title></head>
 <body>
-  <h1>Election System</h1>
+  <h1>เลือกผู้สมัคร</h1>
+  {% for candidate in candidates %}
+  <form method="post" action="{% url 'vote' candidate.id %}">
+    {% csrf_token %}
+    <button type="submit">{{ candidate.name }} — {{ candidate.party }}</button>
+  </form>
+  {% endfor %}
+  <a href="{% url 'results' %}">ดูผลลัพธ์</a>
 </body>
 </html>

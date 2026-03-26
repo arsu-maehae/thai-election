@@ -8,3 +8,10 @@ class Candidate(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.party})"
+    
+
+class Vote(models.Model):
+    candidate = models.ForeignKey(
+        Candidate, on_delete=models.CASCADE, related_name='votes'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
