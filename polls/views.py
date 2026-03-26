@@ -7,8 +7,13 @@ def home_page(request):
     return render(request, 'polls/home.html', {'candidates': candidates})
 
 def vote(request, candidate_id):
+    # เช็ค session ว่าเคยโหวตแล้วหรือยัง
+    if request.session.get('has_voted'):
+        return redirect('home')  # ส่งกลับหน้าแรก ไม่บันทึก vote
+
     candidate = get_object_or_404(Candidate, id=candidate_id)
     Vote.objects.create(candidate=candidate)
+    request.session['has_voted'] = True  # mark ว่าโหวตแล้ว
     return redirect('results')
 
 def results(request):
