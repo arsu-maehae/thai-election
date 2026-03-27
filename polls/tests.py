@@ -10,10 +10,6 @@ def create_voter_and_login(client):
     return voter
 
 
-# -------------------------------------------------------
-# ของเดิม (ไม่แก้)
-# -------------------------------------------------------
-
 class HomePageTest(TestCase):
     def test_root_url_resolves_to_home_page_view(self):
         found = resolve('/')
@@ -149,9 +145,6 @@ class VoterAuthTest(TestCase):
         self.assertContains(response, 'รหัสประชาชนต้องมี 13 หลัก')
 
 
-# -------------------------------------------------------
-# เพิ่มใหม่
-# -------------------------------------------------------
 
 class PageTitleTest(TestCase):
     """เช็ค title ทุกหน้าว่าถูกต้อง"""
